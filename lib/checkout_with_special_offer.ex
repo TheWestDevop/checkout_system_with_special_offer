@@ -67,7 +67,7 @@ defmodule CheckoutWithSpecialOffer do
   @discount_amount_for_strawbarries 0.50
 
   # Return Cart items and Total price of the cart items
-  @spec add_product(String.t() | list(String.t())) :: {:ok, String.t()} | {:error, String.t()}
+  @spec add_product(String.t() | list(String.t())) :: {:ok, map()} | {:error, String.t()}
   def add_product(product_code) when is_binary(product_code) do
     product_details =
       product_code
@@ -112,7 +112,7 @@ defmodule CheckoutWithSpecialOffer do
   # Get and Returns product details by product_code with discounted price
   # if conditions are meants else original price is use
 
-  @spec get_product_details(String.t(), pos_integer()) :: float()
+  @spec get_product_details(String.t(), pos_integer()) :: map()
   defp get_product_details(product_code, quantity) do
     product = Enum.find(products(), &(&1.product_code == product_code))
 
