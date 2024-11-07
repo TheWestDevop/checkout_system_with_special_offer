@@ -73,7 +73,7 @@ defmodule CheckoutWithSpecialOffer do
       product_code
       |> String.trim()
       |> String.split(",")
-      |> get_product_details()
+      |> get_products()
 
     total_price = calculate_total_price(product_details)
 
@@ -81,7 +81,7 @@ defmodule CheckoutWithSpecialOffer do
   end
 
   def add_product(product_code) when is_list(product_code) do
-    product_details = get_product_details(product_code)
+    product_details = get_products(product_code)
 
     total_price = calculate_total_price(product_details)
 
@@ -99,21 +99,21 @@ defmodule CheckoutWithSpecialOffer do
   # Get and Returns list of product details by product_code with
   # discounted price if conditions are meants else original price is use
 
-  @spec get_product_details(list(String.t())) :: list(map())
-  defp get_product_details(product_codes) do
+  @spec get_products(list(String.t())) :: list(map())
+  defp get_products(product_codes) do
     product_codes
     |> Enum.filter(fn product_code ->
       Enum.find(products(), &(&1.product_code == product_code))
     end)
     |> Enum.frequencies()
-    |> Enum.map(fn {product_code, quantity} -> add_product_to_cart(product_code, quantity) end)
+    |> Enum.map(fn {product_code, quantity} -> get_product_details(product_code, quantity) end)
   end
 
   # Get and Returns product details by product_code with discounted price
   # if conditions are meants else original price is use
 
-  @spec add_product_to_cart(String.t(), pos_integer()) :: float()
-  def add_product_to_cart(product_code, quantity) do
+  @spec get_product_details(String.t(), pos_integer()) :: float()
+  defp get_product_details(product_code, quantity) do
     product = Enum.find(products(), &(&1.product_code == product_code))
 
     %{
