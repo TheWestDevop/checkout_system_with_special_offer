@@ -63,8 +63,22 @@ defmodule CheckoutWithSpecialOffer do
 
   """
 
-  @type product_code() :: String.t() | list(String.t())
+  @type product :: %{
+          product_code: String.t(),
+          name: String.t(),
+          price: float()
+        }
+  @type checkout_product_details :: %{
+          product_code: String.t(),
+          name: String.t(),
+          price: float(),
+          quantity: non_neg_integer()
+        }
+  @type product_code :: String.t() | list(String.t())
+
   @discount_amount_for_strawbarries 0.50
+  @free_green_tea_quantity 1
+  @coffee_two_third_discount 2 / 3
 
   # Return Cart items and Total price of the cart items
   @spec add_product(String.t() | list(String.t())) :: {:ok, map()} | {:error, String.t()}
@@ -99,7 +113,7 @@ defmodule CheckoutWithSpecialOffer do
   # Get and Returns list of product details by product_code with
   # discounted price if conditions are meants else original price is use
 
-  @spec get_products(list(String.t())) :: list(map())
+  @spec get_products(list(String.t())) :: list(checkout_product_details())
   defp get_products(product_codes) do
     product_codes
     |> Enum.filter(fn product_code ->
@@ -112,7 +126,7 @@ defmodule CheckoutWithSpecialOffer do
   # Get and Returns product details by product_code with discounted price
   # if conditions are meants else original price is use
 
-  @spec get_product_details(String.t(), pos_integer()) :: map()
+  @spec get_product_details(String.t(), pos_integer()) :: checkout_product_details()
   defp get_product_details(product_code, quantity) do
     product = Enum.find(products(), &(&1.product_code == product_code))
 
@@ -129,7 +143,7 @@ defmodule CheckoutWithSpecialOffer do
 
   @spec check_for_special_offer(String.t(), pos_integer(), float()) :: float()
   defp check_for_special_offer("GR1", order_quantity, price) when order_quantity >= 2 do
-    (order_quantity - 1) * price
+    (order_quantity - @free_green_tea_quantity) * price
   end
 
   defp check_for_special_offer("SR1", order_quantity, price) when order_quantity >= 3 do
@@ -137,8 +151,7 @@ defmodule CheckoutWithSpecialOffer do
   end
 
   defp check_for_special_offer("CF1", order_quantity, price) when order_quantity >= 3 do
-    original_price = order_quantity * price
-    original_price * 2 / 3
+    order_quantity * price * @coffee_two_third_discount
   end
 
   defp check_for_special_offer(_, order_quantity, price) do
@@ -147,7 +160,7 @@ defmodule CheckoutWithSpecialOffer do
 
   # Returns list of test products registered
 
-  @spec products() :: list(map())
+  @spec products() :: list(product())
   defp products do
     [
       %{product_code: "GR1", name: "Green tea", price: 3.11},
