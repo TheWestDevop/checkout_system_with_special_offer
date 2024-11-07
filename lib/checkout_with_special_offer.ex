@@ -45,6 +45,17 @@ defmodule CheckoutWithSpecialOffer do
          }
        }
 
+      iex> CheckoutWithSpecialOffer.add_product(["GR1","GR1"])
+      {:ok,
+        %{
+          total_price: "£3.11",
+          cart_item: [%{price: 3.11, product: "Green tea", product_code: "GR1", quantity: 2}]
+         }
+      }
+
+      iex> CheckoutWithSpecialOffer.add_product([])
+      {:ok, %{cart_item: [], total_price: "£0.0"}}
+
   Wrong arguments return an error:
 
        iex> CheckoutWithSpecialOffer.add_product(nil)

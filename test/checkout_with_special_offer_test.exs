@@ -84,6 +84,14 @@ defmodule CheckoutWithSpecialOfferTest do
       assert {:error, "Invalid product details"} = Subject.add_product(nil)
     end
 
+    test "integer value passed as parameter" do
+      assert {:error, "Invalid product details"} = Subject.add_product(1)
+    end
+
+    test "map value passed as parameter" do
+      assert {:error, "Invalid product details"} = Subject.add_product(%{})
+    end
+
     test "atom value passed as parameter" do
       assert {:error, "Invalid product details"} = Subject.add_product(:ok)
     end
